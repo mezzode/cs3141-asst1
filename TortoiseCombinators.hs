@@ -43,12 +43,16 @@ invisibly i = PenUp (penless i True) where
         | otherwise = Stop
 
 retrace :: Instructions -> Instructions
-retrace i = retracer i Stop
+retrace i = retracer i Stop (Solid 1) white
+-- requires start line style and colour
 
-retracer :: Instructions -> Instructions -> Instructions
-retracer (Move d i) acc = retracer i (Move (-d) acc)
-retracer (Turn a i) acc = retracer i (Turn (-a) acc)
-retracer Stop acc = acc
+retracer :: Instructions -> Instructions -> LineStyle -> Colour -> Instructions
+retracer (Move d i) acc s c = retracer i (Move (-d) acc) s c
+retracer (Turn a i) acc s c = retracer i (Turn (-a) acc) s c
+-- line style and colour are off by one due to start state
+retracer (SetStyle nextStyle i) acc currStyle c = retracer i (SetStyle currStyle acc) nextStyle c
+retracer (SetColour nextColour i) acc s currColour = retracer i (SetColour currColour acc) s nextColour
+retracer Stop acc s c = acc
 
 overlay :: [Instructions] -> Instructions
 overlay is = error "'overlay' unimplemented"
