@@ -28,20 +28,19 @@ loop n i
 
 -- no picture but produces same state, which includes pen state
 invisibly :: Instructions -> Instructions
-invisibly i = PenUp (penless i True)
-
--- we pass whether penDown in the visible version so final state penDown will match
-penless :: Instructions -> Bool -> Instructions
-penless (Move d i) penDown = Move d (penless i penDown)
-penless (Turn a i ) penDown = Turn a (penless i penDown)
-penless (SetStyle ls i) penDown = SetStyle ls (penless i penDown)
-penless (SetColour c i) penDown = SetColour c (penless i penDown)
-penless (PenDown i) penDown = penless i True
-penless (PenUp i) penDown = penless i False
--- if penDown then we PenDown so final state correctly has penDown too
-penless Stop penDown
-    | penDown = PenDown Stop
-    | otherwise = Stop
+invisibly i = PenUp (penless i True) where
+    -- we pass whether penDown in the visible version so final state penDown will match
+    penless :: Instructions -> Bool -> Instructions
+    penless (Move d i) penDown = Move d (penless i penDown)
+    penless (Turn a i ) penDown = Turn a (penless i penDown)
+    penless (SetStyle ls i) penDown = SetStyle ls (penless i penDown)
+    penless (SetColour c i) penDown = SetColour c (penless i penDown)
+    penless (PenDown i) penDown = penless i True
+    penless (PenUp i) penDown = penless i False
+    -- if penDown then we PenDown so final state correctly has penDown too
+    penless Stop penDown
+        | penDown = PenDown Stop
+        | otherwise = Stop
 
 retrace :: Instructions -> Instructions
 retrace i = error "'retrace' unimplemented"
