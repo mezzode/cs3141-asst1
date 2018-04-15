@@ -25,7 +25,7 @@ colours = [white,black,blue,red,green,yellow,magenta,orange,brown]
 arbitraryInstructions :: Frequencies -> Gen (Instructions) 
 arbitraryInstructions freqs = sized $ \n -> case n of
      0 -> pure Stop
-     _ -> ($) <$> frequency (freqTable freqs) <*> resize (n - 1) arbitrary
+     _ -> frequency (freqTable freqs) <*> resize (n - 1) (arbitraryInstructions freqs)
 
 instance Arbitrary LineStyle where
   arbitrary = oneof [ Solid  <$> choose (1,10)

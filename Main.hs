@@ -42,10 +42,10 @@ flowers :: Instructions -> Instructions
 flowers top = Turn 45 flowers4 
   where
     flowers2 = flower top
-     `andThen` invisibly (Turn 135 (Move 424 (Turn 135 Stop)))
+     `andThen` invisibly (Turn 135 (Move 424 (Turn (-45) Stop)))
      `andThen` retrace (flower top)
     
-    flowers4 = flowers2 `andThen` (Turn (-90) flowers2)
+    flowers4 = flowers2 `andThen` (Turn 90 flowers2)
 
 flowers' :: Instructions -> Instructions
 flowers' top = overlay [ Turn 45 f, Turn 135 f, Turn 225 f, Turn 315 f ]
