@@ -22,7 +22,9 @@ andThen (PenDown i1) i2 = PenDown (i1 `andThen` i2)
 andThen (PenUp i1) i2 = PenUp (i1 `andThen` i2)
 
 loop :: Int -> Instructions -> Instructions
-loop n i = error "'loop' unimplemented"
+loop n i
+    | n > 0 = i `andThen` (loop (n-1) i)
+    | otherwise = Stop
 
 invisibly :: Instructions -> Instructions
 invisibly i = error "'invisibly' unimplemented"
