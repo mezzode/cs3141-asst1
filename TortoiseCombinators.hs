@@ -60,5 +60,5 @@ retrace i = retracer i Stop (Solid 1) white True where
     retracer Stop acc _ _ _ = acc
 
 overlay :: [Instructions] -> Instructions
-overlay is = error "'overlay' unimplemented"
-
+overlay [] = Stop
+overlay (i : is) = i `andThen` (invisibly $ retrace i) `andThen` (overlay is)
