@@ -43,7 +43,12 @@ invisibly i = PenUp (penless i True) where
         | otherwise = Stop
 
 retrace :: Instructions -> Instructions
-retrace i = error "'retrace' unimplemented"
+retrace i = retracer i Stop
+
+retracer :: Instructions -> Instructions -> Instructions
+retracer (Move d i) acc = retracer i (Move (-d) acc)
+retracer (Turn a i) acc = retracer i (Turn (-a) acc)
+retracer Stop acc = acc
 
 overlay :: [Instructions] -> Instructions
 overlay is = error "'overlay' unimplemented"
