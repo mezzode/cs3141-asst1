@@ -44,14 +44,20 @@ invisibly i = PenUp (penless i True) where
 
 -- requires start line style and colour
 retrace :: Instructions -> Instructions
-retrace i = retracer i Stop (Solid 1) white where
-    retracer :: Instructions -> Instructions -> LineStyle -> Colour -> Instructions
-    retracer (Move d i) acc s c = retracer i (Move (-d) acc) s c
-    retracer (Turn a i) acc s c = retracer i (Turn (-a) acc) s c
-    -- line style and colour are off by one due to start state
-    retracer (SetStyle nextStyle i) acc currStyle c = retracer i (SetStyle currStyle acc) nextStyle c
-    retracer (SetColour nextColour i) acc s currColour = retracer i (SetColour currColour acc) s nextColour
-    retracer Stop acc s c = acc
+retrace i = retracer i Stop (Solid 1) white True where
+    retracer :: Instructions -> Instructions -> LineStyle -> Colour -> Bool -> Instructions
+    retracer (Move d i) acc s c p = retracer i (Move (-d) acc) s c p
+    retracer (Turn a i) acc s c p = retracer i (Turn (-a) acc) s c p
+    -- line style, colour, and pen actions are off by one due to start state so we pass what they should be next
+    retracer (SetStyle nextStyle i) acc currStyle c p = retracer i (SetStyle currStyle acc) nextStyle c p
+    retracer (SetColour nextColour i) acc s currColour p = retracer i (SetColour currColour acc) s nextColour p
+    retracer (PenUp i) acc s c penDown
+        | penDown = retracer i (PenDown acc) s c False
+        | otherwise = retracer i (PenUp acc) s c False
+    retracer (PenDown i) acc s c penDown
+        | penDown = retracer i (PenDown acc) s c True
+        | otherwise = retracer i (PenUp acc) s c True
+    retracer Stop acc _ _ _ = acc
 
 overlay :: [Instructions] -> Instructions
 overlay is = error "'overlay' unimplemented"
